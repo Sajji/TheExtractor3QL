@@ -1,0 +1,7 @@
+{
+  "domain": "fedworld.collibra.com",
+  "apiURL": "https://fedworld.collibra.com/rest/2.0",
+  "graphURL": "https://fedworld.collibra.com/graphql/knowledgeGraph/v1",
+  "username": "SysAdmin",
+  "password": "woffles"
+}
