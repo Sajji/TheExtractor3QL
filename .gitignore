@@ -131,3 +131,4 @@ dist
 
 # my stuff to ignore
 config.json
+extractedData/
