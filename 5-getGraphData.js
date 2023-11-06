@@ -5,7 +5,12 @@ const config = require('./config.json');
 const fsPromises = require('fs').promises;
 const fsSync = require('fs');
 
-async function fetchGraphQLData(domainId) {
+// Let's keep a count of the total number of assets discovered and attributes, relations, and tags.
+
+let totalAssets = 0;
+
+
+async function fetchGraphQLData(domainId, limit, offset) {
   const endpoint = config.graphURL;
   const username = config.username;
   const password = config.password;
@@ -14,7 +19,8 @@ async function fetchGraphQLData(domainId) {
   query {
     assets(
       where: { domain: { id: { eq: "${domainId}" } } }
-      limit: -1
+      limit: ${limit},
+      offset: ${offset}
     ) {
       id
       name: fullName
@@ -31,7 +37,7 @@ async function fetchGraphQLData(domainId) {
           name
         }
       }
-      stringAttributes(limit: -1) {
+      stringAttributes(limit: 500) {
         id
         type {
           id
@@ -39,7 +45,7 @@ async function fetchGraphQLData(domainId) {
         }
         stringValue
       }
-      numericAttributes(limit: -1) {
+      numericAttributes(limit: 500) {
         id
         type {
           id
@@ -47,7 +53,7 @@ async function fetchGraphQLData(domainId) {
         }
         numericValue
       }
-      multiValueAttributes(limit: -1) {
+      multiValueAttributes(limit: 500) {
         id
         type {
           id
@@ -55,7 +61,7 @@ async function fetchGraphQLData(domainId) {
         }
         stringValues
       }
-      dateAttributes(limit: -1) {
+      dateAttributes(limit: 500) {
         id
         type {
           id
@@ -63,7 +69,7 @@ async function fetchGraphQLData(domainId) {
         }
         dateValue
       }
-      booleanAttributes(limit: -1) {
+      booleanAttributes(limit: 500) {
         id
         type {
           id
@@ -72,7 +78,7 @@ async function fetchGraphQLData(domainId) {
         booleanValue
       }
   
-      outgoingRelations(limit: -1) {
+      outgoingRelations(limit: 500) {
         id
         type {
           id
@@ -86,7 +92,7 @@ async function fetchGraphQLData(domainId) {
           fullName
         }
       }
-      incomingRelations(limit: -1) {
+      incomingRelations(limit: 500) {
         id
         type {
           id
@@ -100,7 +106,7 @@ async function fetchGraphQLData(domainId) {
           fullName
         }
       }
-      tags(limit: -1) {
+      tags(limit: 500) {
         id
         name
       }
@@ -135,19 +141,38 @@ async function getGraphQLData(baseDirectory) {
     const domainList = JSON.parse(rawData);
 
     for (const domain of domainList) {
-      console.log(domain.name);
       const allData = [];
       // Initialize unique sets
       const uniqueAssets = new Set();
       const uniqueAttributes = new Set();
       const uniqueRelations = new Set();
       const uniqueTags = new Set();
-      const responseData = await fetchGraphQLData(domain.id);
+      console.log("Fetching data for domain:", domain.id);
+
+
+      let isLastPage = false;
+      const limit = 10; // Set the limit of items per page
+      let offset = 0; // Start at the beginning
+
+    while (!isLastPage) {
+      const responseData = await fetchGraphQLData(domain.id, limit, offset);
+      
+      // If there's no data or the data array is smaller than the limit, we are on the last page
+      if (!responseData || responseData.length < limit) {
+        isLastPage = true;
+      } else {
+        // If we receive the full limit of items, increment the offset for the next page
+        offset += limit;
+        console.log(`Fetched ${offset} assets`)
+      }
+
+      // Process the response data as before
       if (!responseData) {
         continue;
       }
 
       responseData.forEach(asset => {
+        totalAssets++;
         const assetData = {
           id: asset.id,
           name: asset.name,
@@ -157,6 +182,7 @@ async function getGraphQLData(baseDirectory) {
           typeId: asset.type.id,
           typeName: asset.type.name
         };
+
 
         const processAttributes = (attributes, valueType) => {
           return attributes.map(attribute => {
@@ -202,11 +228,12 @@ async function getGraphQLData(baseDirectory) {
           asset.tags.forEach(tag => uniqueTags.add(JSON.stringify(tag)));
       
       });
+    }
       if (uniqueAssets.size > 0) {
         const assetsDomainPath = path.join(baseDirectory, `assets_${domain.name}.json`);
         const allAssetsOutput = JSON.stringify([...uniqueAssets].map(JSON.parse), null, 2);
         fsSync.writeFileSync(assetsDomainPath, allAssetsOutput);
-        console.log(`Data saved to ${assetsDomainPath}. Total assets: ${allAssetsOutput.length}`);
+        console.log(`Assets saved: ${totalAssets}`);
       }
       else {
         console.log(`No assets found for ${domain.name}`);
@@ -241,22 +268,11 @@ async function getGraphQLData(baseDirectory) {
       else {
         console.log(`No tags found for ${domain.name}`);
       }
-      // console.log(`Data saved to ${assetsDomainPath}. Total assets: ${allData.length}`);
     }
-        //Write unique attributes, relations, and tags to respective files
-        // const assetsPath = path.join(baseDirectory, 'assets.json');
-        // const attributesPath = path.join(baseDirectory, 'attributes.json');
-        // const relationsPath = path.join(baseDirectory, 'relations.json');
-        // const tagsPath = path.join(baseDirectory, 'tags.json');
-    
-        // await fsPromises.writeFile(assetsPath, JSON.stringify([...uniqueAssets].map(JSON.parse), null, 2));
-        // await fsPromises.writeFile(attributesPath, JSON.stringify([...uniqueAttributes].map(JSON.parse), null, 2));
-        // await fsPromises.writeFile(relationsPath, JSON.stringify([...uniqueRelations].map(JSON.parse), null, 2));
-        // await fsPromises.writeFile(tagsPath, JSON.stringify([...uniqueTags].map(JSON.parse), null, 2));
-
   } catch (error) {
     console.error(error);
   }
+  console.log(`Total assets: ${totalAssets}`);
 }
 
 //module.exports = getGraphQLData;

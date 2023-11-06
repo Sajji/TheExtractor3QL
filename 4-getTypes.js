@@ -41,7 +41,7 @@ async function fetchData(endpoint, config) {
       const response = await axios.get(`${baseREST}/${endpoint}`, {
         auth: auth
       });
-      console.log(response.data);
+
 
       results = response.data.results.map(relationType => ({
         id: relationType.id,
@@ -60,7 +60,7 @@ async function fetchData(endpoint, config) {
       const response = await axios.get(`${baseREST}/${endpoint}`, {
         auth: auth
       });
-      console.log(response.data);
+
 
       results = response.data.results.map(assetType => ({
         id: assetType.id,
@@ -113,8 +113,9 @@ async function fetchData(endpoint, config) {
         const stringType = attributeType?.stringType;
         const allowedValues = attributeType?.allowedValues;
         const isInteger = attributeType?.isInteger;
+        const statisticsEnabled = attributeType?.statisticsEnabled;
 
-        return { kind, newName, id, name, description, stringType, allowedValues, isInteger };
+        return { kind, newName, id, name, description, stringType, allowedValues, isInteger, statisticsEnabled };
       });
 
       console.log(`${endpoint}: Downloaded ${results.length}`);
