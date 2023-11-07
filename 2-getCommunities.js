@@ -120,7 +120,7 @@ const fetchChildCommunities = async (parentId) => {
 };
 
 // Start function
-const start = async () => {
+const getCommunities = async () => {
   const communityName = await question('Enter the name of the community to search for: ');
   const communities = await fetchCommunities(communityName);
 
@@ -166,4 +166,4 @@ const saveCommunitiesToFile = (data, folderName, fileName) => {
   console.log(`Data saved to ${filePath}`);
 };
 
-start();
+getCommunities();

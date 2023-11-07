@@ -5,7 +5,7 @@ async function buildAssetTypesTree() {
     try {
         const backupDir = path.join(__dirname, '.', 'extractedData');
         const outputDir = path.join(__dirname, '.', 'extractedData');
-        const allAssetTypesFile = path.join(outputDir, 'allAssetTypes.json');
+        const allAssetTypesFile = path.join(outputDir, 'uniqueAssetTypes.json');
         const assetTypesFile = path.join(backupDir, 'assetTypes.json');
         const outputFile = path.join(outputDir, 'allAssetTypesTree.json');
 
@@ -48,4 +48,4 @@ async function buildAssetTypesTree() {
     }
 }
 
-module.exports = buildAssetTypesTree;
+buildAssetTypesTree();

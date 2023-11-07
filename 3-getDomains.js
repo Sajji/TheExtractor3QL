@@ -5,9 +5,11 @@ const path = require('path');
 const configPath = path.join(__dirname, 'config.json');
 const communitiesPath = path.join(__dirname, 'extractedData', 'communities.json');
 const domainsPath = path.join(__dirname, 'extractedData', 'domains.json');
+const domainTypesPath = path.join(__dirname, 'extractedData', 'uniqueDomainTypes.json');
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 const communities = JSON.parse(fs.readFileSync(communitiesPath, 'utf8'));
 
+const uniqueDomainTypes = new Set();
 // Helper function to perform GraphQL query for domains
 const fetchDomains = async (id) => {
   const query = {
@@ -17,6 +19,9 @@ const fetchDomains = async (id) => {
           id
           name
           description
+          type {
+            id
+          }
           parent {
             communityId: id
           }
@@ -42,6 +47,7 @@ const fetchDomains = async (id) => {
     return response.data.data.domains.map(domain => ({
       id: domain.id,
       name: domain.name,
+      typeId: domain.type.id,
       description: domain.description,
       communityId: domain.parent.communityId
     }));
@@ -49,6 +55,7 @@ const fetchDomains = async (id) => {
     console.error(`Error fetching domains for community ${id}:`, error.message);
     return [];
   }
+
 };
 
 // Main function to process all communities and save domains
@@ -57,11 +64,13 @@ const processCommunities = async () => {
 
   for (const community of communities) {
     const domains = await fetchDomains(community.id);
+    uniqueDomainTypes.add(...domains.map(domain => domain.typeId));
     allDomains = allDomains.concat(domains);
   }
 
   // Write the domains data to a file
   fs.writeFileSync(domainsPath, JSON.stringify(allDomains, null, 2), 'utf8');
+  fs.writeFileSync(domainTypesPath, JSON.stringify([...uniqueDomainTypes], null, 2), 'utf8');
   console.log(`Domains data saved to ${domainsPath}`);
 };
 

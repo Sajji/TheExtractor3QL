@@ -38,4 +38,4 @@ async function extractUniqueTypes() {
     }
 }
 
-module.exports = extractUniqueTypes;
+extractUniqueTypes();
