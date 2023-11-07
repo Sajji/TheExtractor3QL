@@ -121,7 +121,7 @@ async function getGraphQLData(baseDirectory) {
           ...asset.outgoingRelations,
           ...asset.incomingRelations,
         ].map(relation => ({
-          id: relation.type.id,
+          typeId: relation.type.id,
         }));
         allData.push({
           relations,

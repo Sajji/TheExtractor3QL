@@ -115,7 +115,7 @@ async function fetchData(endpoint, config) {
         const isInteger = attributeType?.isInteger;
         const statisticsEnabled = attributeType?.statisticsEnabled;
 
-        return { kind, newName, id, name, description, stringType, allowedValues, isInteger, statisticsEnabled };
+        return { id, name, newName,  kind,   description, stringType, allowedValues, isInteger, statisticsEnabled };
       });
 
       console.log(`${endpoint}: Downloaded ${results.length}`);

@@ -99,13 +99,16 @@ async function getGraphQLData(baseDirectory) {
           typeId: asset.type.id,
         };
 
+        const assetType = {
+          typeId: asset.type.id
+        }
   
         allData.push({
           ...assetData,
           });
 
           uniqueAssets.add(JSON.stringify(assetData));
-          uniqueAssetTypes.add(JSON.stringify(assetData.typeId));
+          uniqueAssetTypes.add(JSON.stringify(assetType));
       
       });
     }

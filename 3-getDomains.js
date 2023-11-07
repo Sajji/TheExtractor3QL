@@ -10,7 +10,7 @@ const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 const communities = JSON.parse(fs.readFileSync(communitiesPath, 'utf8'));
 
 const uniqueDomainTypes = new Set();
-// Helper function to perform GraphQL query for domains
+
 const fetchDomains = async (id) => {
   const query = {
     query: `
@@ -30,7 +30,6 @@ const fetchDomains = async (id) => {
     `
   };
 
-  // Encode username and password for basic authentication
   const auth = Buffer.from(`${config.username}:${config.password}`).toString('base64');
 
   try {
@@ -44,6 +43,11 @@ const fetchDomains = async (id) => {
       data: JSON.stringify(query),
     });
 
+    response.data.data.domains.forEach(domain => {
+      // Extract typeId and add it to the set
+      uniqueDomainTypes.add(domain.type.id);
+    });
+    
     return response.data.data.domains.map(domain => ({
       id: domain.id,
       name: domain.name,
@@ -55,23 +59,23 @@ const fetchDomains = async (id) => {
     console.error(`Error fetching domains for community ${id}:`, error.message);
     return [];
   }
-
 };
 
-// Main function to process all communities and save domains
 const processCommunities = async () => {
   let allDomains = [];
 
   for (const community of communities) {
     const domains = await fetchDomains(community.id);
-    uniqueDomainTypes.add(...domains.map(domain => domain.typeId));
     allDomains = allDomains.concat(domains);
   }
 
-  // Write the domains data to a file
   fs.writeFileSync(domainsPath, JSON.stringify(allDomains, null, 2), 'utf8');
-  fs.writeFileSync(domainTypesPath, JSON.stringify([...uniqueDomainTypes], null, 2), 'utf8');
+  // Convert the set to an array of objects and then stringify
+  const uniqueDomainTypesArray = Array.from(uniqueDomainTypes).map(typeId => ({ typeId: typeId }));
+  fs.writeFileSync(domainTypesPath, JSON.stringify(uniqueDomainTypesArray, null, 2), 'utf8');
   console.log(`Domains data saved to ${domainsPath}`);
+  console.log(`Unique domain types saved to ${domainTypesPath}`);
 };
 
 processCommunities();
+

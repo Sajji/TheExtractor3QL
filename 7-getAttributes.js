@@ -143,7 +143,7 @@ async function getGraphQLData(baseDirectory) {
         ];
 
         const attributeType = attributes.map(attribute => ({
-          id: attribute.typeId
+          typeId: attribute.typeId
         }));
 
         allData.push({
