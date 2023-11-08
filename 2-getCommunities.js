@@ -166,4 +166,4 @@ const saveCommunitiesToFile = (data, folderName, fileName) => {
   console.log(`Data saved to ${filePath}`);
 };
 
-getCommunities();
+module.exports = getCommunities;
