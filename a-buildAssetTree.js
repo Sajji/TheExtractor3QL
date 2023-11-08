@@ -7,7 +7,7 @@ async function buildAssetTypesTree() {
         const outputDir = path.join(__dirname, '.', 'extractedData');
         const allAssetTypesFile = path.join(outputDir, 'uniqueAssetTypes.json');
         const assetTypesFile = path.join(backupDir, 'assetTypes.json');
-        const outputFile = path.join(outputDir, 'allAssetTypesTree.json');
+        const outputFile = path.join(outputDir, 'uniqueAssetTypesTree.json');
 
         // Ensure output directory exists
         await fs.mkdir(outputDir, { recursive: true });
