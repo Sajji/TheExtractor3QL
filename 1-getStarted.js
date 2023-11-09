@@ -65,5 +65,5 @@ const createConfig = async () => {
   }
 };
 
-module.exports = createConfig;
-//createConfig();
+//module.exports = createConfig;
+createConfig();
