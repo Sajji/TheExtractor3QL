@@ -3,5 +3,8 @@
   "apiURL": "https://fedworld.collibra.com/rest/2.0",
   "graphURL": "https://fedworld.collibra.com/graphql/knowledgeGraph/v1",
   "username": "SysAdmin",
-  "password": "woffles"
+  "password": "woffles",
+  "communityId": "00000000-0000-0000-0001-000100000001",
+  "communityName": "1.Data",
+  "communityDescription": "No description available"
 }

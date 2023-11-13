@@ -119,6 +119,8 @@ const fetchChildCommunities = async (parentId) => {
   }
 };
 
+// ... [rest of your code] ...
+
 // Start function
 const getCommunities = async () => {
   const communityName = await question('Enter the name of the community to search for: ');
@@ -126,15 +128,26 @@ const getCommunities = async () => {
 
   if (communities && communities.length > 0) {
     const selectedCommunity = await selectCommunity(communities);
-    const selectedCommunityObject = {
-      id: selectedCommunity.id,
-      name: selectedCommunity.name
-    }
     console.log(`You have selected: ${selectedCommunity.name}`);
     console.log('Fetching child communities...');
-    allCommunities.push(selectedCommunityObject);
+    
+    // Update config with selected community details
+    config.communityId = selectedCommunity.id;
+    config.communityName = selectedCommunity.name;
+    // Assume 'description' is available in the selectedCommunity object
+    config.communityDescription = selectedCommunity.description || 'No description available';
+
+    // Save updated config back to config.json
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+    console.log('Updated config.json with selected community details.');
+
+    allCommunities.push({
+      id: selectedCommunity.id,
+      name: selectedCommunity.name,
+      description: selectedCommunity.description
+    });
     await fetchChildCommunities(selectedCommunity.id);
-    console.log(allCommunities)
+    console.log(allCommunities);
     saveCommunitiesToFile(allCommunities, 'extractedData', 'communities.json');
     
   } else {
@@ -143,6 +156,9 @@ const getCommunities = async () => {
 
   rl.close();
 };
+
+// ... [rest of your code] ...
+
 
 // New function to save the data
 const saveCommunitiesToFile = (data, folderName, fileName) => {
