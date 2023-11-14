@@ -52,7 +52,7 @@ async function fetchData(endpoint, config) {
         role: relationType.role,
         coRole: relationType.coRole,
         description: relationType?.description,
-        uniqueKey: `${relationType.sourceType.name}${relationType.targetType.name}${relationType.role}${relationType.coRole}`
+        uniqueKey: `${relationType.sourceType.id}${relationType.targetType.id}${relationType.role}${relationType.coRole}`
       }));
 
       console.log(`${endpoint}: Downloaded ${results.length}`);

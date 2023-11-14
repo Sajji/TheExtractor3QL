@@ -11,7 +11,7 @@ async function extractUniqueTypes() {
         await fs.mkdir(outputDir, { recursive: true });
 
         // Read all files in the backup directory
-        const files = (await fs.readdir(backupDir)).filter(file => file.startsWith('assets_'));
+        const files = (await fs.readdir(backupDir)).filter(file => file.startsWith('assets'));
 
         const typeSet = new Set();
 
