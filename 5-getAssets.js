@@ -22,7 +22,6 @@ async function fetchGraphQLData(domainId, limit, offset) {
     assets(
       where: { domain: { 
         id: { eq: "${domainId}" } 
-        type: { id: { ne: "00000000-0000-0000-0000-000000030005" } }
           }
         }
       limit: ${limit},

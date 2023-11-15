@@ -14,19 +14,25 @@ const uniqueDomainTypes = new Set();
 const fetchDomains = async (id) => {
   const query = {
     query: `
-      query Domains {
-        domains(where: { parent: { id: { eq: "${id}" } } }) {
+    query Domains {
+      domains(
+          where: {
+              parent: { id: { eq: "${id}" } }
+              type: { id: { ne: "00000000-0000-0000-0000-000000030005" } }
+          }
+      ) {
           id
           name
           description
           type {
-            id
+              id
           }
           parent {
-            communityId: id
+              communityId: id
           }
-        }
       }
+  }
+  
     `
   };
 
