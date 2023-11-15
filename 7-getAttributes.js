@@ -24,6 +24,7 @@ async function fetchGraphQLData(domainId, limit, offset) {
       limit: ${limit},
       offset: ${offset}
       ) {
+        id
         stringAttributes(limit: 100) {
           id
           type {
@@ -125,8 +126,8 @@ async function getGraphQLData(baseDirectory) {
         const processAttributes = (attributes, valueType) => {
           return attributes.map(attribute => {
             return {
-              assetId: asset.id,
               id: attribute.id,
+              assetId: asset.id,
               typeId: attribute.type.id,
               name: attribute.type.name,
               [valueType]: attribute[valueType]
