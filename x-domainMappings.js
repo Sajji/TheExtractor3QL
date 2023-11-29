@@ -7,20 +7,23 @@ const domains = JSON.parse(fs.readFileSync(path.join('extractedData', 'domains.j
 const communityMappings = JSON.parse(fs.readFileSync(path.join('extractedData', 'communityMappings.json'), 'utf8'));
 
 let updatedDomains = [];
-let domainMappings = {};
+let domainMappings = [];
 
 for (let domain of domains) {
     // Generate a new UUID
     let newUuid = uuidv4();
 
     // Add the mapping from the old UUID to the new UUID
-    domainMappings[domain.id] = newUuid;
+    domainMappings.push({ oldId: domain.id, newId: newUuid });
 
     // Replace the domain's id with the new UUID
     domain.id = newUuid;
 
     // Replace the domain's communityId with the new UUID from the community mappings
-    domain.communityId = communityMappings[domain.communityId];
+    let mapping = communityMappings.find(mapping => mapping.oldId === domain.communityId);
+    if (mapping) {
+        domain.communityId = mapping.newId;
+    }
 
     // Add the updated domain to the new array
     updatedDomains.push(domain);

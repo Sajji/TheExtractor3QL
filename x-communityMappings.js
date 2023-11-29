@@ -6,21 +6,24 @@ const { v4: uuidv4 } = require('uuid');
 const data = JSON.parse(fs.readFileSync(path.join('extractedData', 'communities.json'), 'utf8'));
 
 let updatedData = [];
-let mappings = {};
+let mappings = [];
 
 for (let community of data) {
     // Generate a new UUID
     let newUuid = uuidv4();
 
     // Add the mapping from the old UUID to the new UUID
-    mappings[community.id] = newUuid;
+    mappings.push({ oldId: community.id, newId: newUuid });
 
     // Replace the community's id with the new UUID
     community.id = newUuid;
 
     // If the community has a parentId, replace it with the new UUID from the mappings
     if (community.parentId) {
-        community.parentId = mappings[community.parentId];
+        let mapping = mappings.find(mapping => mapping.oldId === community.parentId);
+        if (mapping) {
+            community.parentId = mapping.newId;
+        }
     }
 
     // Add the updated community to the new array
