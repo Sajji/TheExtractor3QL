@@ -15,7 +15,7 @@ const fetchDomains = async (id) => {
   const query = {
     query: `
       query Domains {
-        domains(where: { parent: { id: { eq: "${id}" } } }) {
+        domains(where: { parent: { id: { eq: "${id}" } } }, limit: 1000) {
           id
           name
           description

@@ -19,7 +19,7 @@ const fetchCommunities = async (communityName) => {
     const query = {
       query: `
         query Communities {
-          communities(where: { name: { contains: "${communityName}" } }) {
+          communities(where: { name: { contains: "${communityName}" } }, limit: 1000) {
             id
             name
           }
@@ -74,7 +74,7 @@ const fetchChildCommunities = async (parentId) => {
   const query = {
     query: `
       query ChildCommunities {
-        communities(where: { parent: { id: { eq: "${parentId}" } } }) {
+        communities(where: { parent: { id: { eq: "${parentId}" } } }, limit: 1000) {
           id
           name
           description
